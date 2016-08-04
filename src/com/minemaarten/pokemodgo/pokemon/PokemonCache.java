@@ -8,10 +8,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.collect.Maps;
+import com.minemaarten.pokemodgo.PokeModGo;
 
 public class PokemonCache{
     private final Map<Integer, Future<Pokemon>> cache = Maps.newHashMap();
@@ -52,5 +54,9 @@ public class PokemonCache{
             cache.put(id, result);
         }
         return result;
+    }
+
+    public Stream<Pokemon> getLoadedPokemon(){
+        return cache.entrySet().stream().filter(x -> x.getValue().isDone()).map(x -> PokeModGo.instance.getPokemon(x.getKey()));
     }
 }

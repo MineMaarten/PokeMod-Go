@@ -28,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.minemaarten.pokemodgo.lib.Constants;
 
 public class Pokemon{
     public enum Type{
@@ -40,11 +41,14 @@ public class Pokemon{
     public final String name;
     public final EnumSet<Type> types;
     public final Set<String> stringTypes = new HashSet<String>();
+    public final String habitat;
 
     private Future<BufferedImage> texture;
     private int textureId = -1;
     private static final ExecutorService TEXTURE_GETTER = Executors.newSingleThreadExecutor();
-    private static final ResourceLocation MISSING_TEXTURE = new ResourceLocation("test", "test.png");
+    private static final ResourceLocation MISSING_TEXTURE = new ResourceLocation(Constants.MOD_ID, "misc/missing_texture.png");
+    private static final ResourceLocation LOADING_TEXTURE = new ResourceLocation(Constants.MOD_ID, "misc/loading_texture.png");
+    public static final ResourceLocation MISSING_NO = new ResourceLocation(Constants.MOD_ID, "misc/missing_no.png");
 
     protected Pokemon(int id) throws IOException{
         InputStream stream = getInputStream(String.format(BASE_URL, id));
@@ -63,6 +67,7 @@ public class Pokemon{
             } catch(IllegalArgumentException e) {}
         }
         System.out.println("Loaded " + name + ":" + id + ", types: " + StringUtils.join(stringTypes, ","));
+        habitat = "grassland";
     }
 
     private InputStream getInputStream(String url) throws IOException{
@@ -74,24 +79,26 @@ public class Pokemon{
 
     @SideOnly(Side.CLIENT)
     public void bindTexture(){
-        if(texture == null) {
-            texture = TEXTURE_GETTER.submit(() -> {
-                try {
-                    return ImageIO.read(getInputStream(String.format(SPRITE_URL, id)));
-                } catch(Exception e) {
-                    e.printStackTrace();
-                    throw new RuntimeException();
-                }
-            });
-        } else if(!texture.isDone()) {
-            Minecraft.getMinecraft().getTextureManager().bindTexture(MISSING_TEXTURE);
-        } else {
-            try {
+        try {
+            if(texture == null) {
+                texture = TEXTURE_GETTER.submit(() -> {
+                    try {
+                        return ImageIO.read(getInputStream(String.format(SPRITE_URL, id)));
+                    } catch(Exception e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                });
+            } else if(!texture.isDone()) {
+                Minecraft.getMinecraft().getTextureManager().bindTexture(LOADING_TEXTURE);
+            } else if(texture.get() == null) {
+                Minecraft.getMinecraft().getTextureManager().bindTexture(MISSING_TEXTURE);
+            } else {
                 if(textureId == -1) textureId = new DynamicTexture(texture.get()).getGlTextureId();
                 GlStateManager.bindTexture(textureId);
-            } catch(InterruptedException | ExecutionException e) { //Should not be possible as we wait on it via .isDone()
-                e.printStackTrace();
             }
+        } catch(InterruptedException | ExecutionException e) { //thrown by Future#get(), Should not be possible as we wait on it via .isDone()
+            e.printStackTrace();
         }
     }
 }
