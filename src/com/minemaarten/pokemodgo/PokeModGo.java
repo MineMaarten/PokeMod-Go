@@ -21,6 +21,7 @@ import com.minemaarten.pokemodgo.entity.EntityPokemonWater;
 import com.minemaarten.pokemodgo.event.PokeModEventHandler;
 import com.minemaarten.pokemodgo.init.ModItems;
 import com.minemaarten.pokemodgo.lib.Constants;
+import com.minemaarten.pokemodgo.network.NetworkHandler;
 import com.minemaarten.pokemodgo.pokedex.PokedexManager;
 import com.minemaarten.pokemodgo.pokemon.Pokemon;
 import com.minemaarten.pokemodgo.pokemon.PokemonCache;
@@ -63,6 +64,7 @@ public class PokeModGo{
     @EventHandler
     public void load(FMLInitializationEvent event){
         proxy.init();
+        NetworkHandler.init();
     }
 
     @EventHandler

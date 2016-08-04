@@ -25,7 +25,7 @@ public class PokedexManager{
     }
 
     public void addPokemon(EntityPlayer player, int pokemonId){
-        getPokedex(player.getGameProfile().getId(), player.getGameProfile().getName()).addPokemon(pokemonId);
+        getPokedex(player).addPokemon(pokemonId);
         save();
     }
 
@@ -33,7 +33,11 @@ public class PokedexManager{
         addPokemon(player, pokemon.id);
     }
 
-    private Pokedex getPokedex(UUID uuid, String playerName){
+    public Pokedex getPokedex(EntityPlayer player){
+        return getPokedex(player.getGameProfile().getId(), player.getGameProfile().getName());
+    }
+
+    public Pokedex getPokedex(UUID uuid, String playerName){
         Pokedex pokedex = playerToPokedex.get(uuid);
         if(pokedex == null) {
             pokedex = new Pokedex(uuid, playerName);

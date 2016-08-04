@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.RenderSnowball;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
@@ -29,5 +30,23 @@ public class ClientProxy extends CommonProxy{
         ModelBakery.registerItemVariants(ModItems.pokeball, resLoc);
         Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(ModItems.pokeball, 0, new ModelResourceLocation(resLoc, "inventory"));
 
+        resLoc = new ResourceLocation(Constants.MOD_ID, "pokedex");
+        ModelBakery.registerItemVariants(ModItems.pokedex, resLoc);
+        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(ModItems.pokedex, 0, new ModelResourceLocation(resLoc, "inventory"));
+
+    }
+
+    @Override
+    public void addScheduledTask(Runnable runnable, boolean serverSide){
+        if(serverSide) {
+            super.addScheduledTask(runnable, serverSide);
+        } else {
+            Minecraft.getMinecraft().addScheduledTask(runnable);
+        }
+    }
+
+    @Override
+    public EntityPlayer getPlayer(){
+        return Minecraft.getMinecraft().thePlayer;
     }
 }

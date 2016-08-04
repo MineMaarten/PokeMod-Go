@@ -30,9 +30,11 @@ public class EntityPokeball extends EntityThrowable{
     protected void onImpact(RayTraceResult result){
         if(result.entityHit != null) {
             if(result.entityHit instanceof EntityPokemon && getThrower() instanceof EntityPlayer) {
-                int pokemonId = ((EntityPokemon)result.entityHit).getPokemonId();
-                PokeModGo.instance.pokedexManager.addPokemon((EntityPlayer)getThrower(), pokemonId);
-                result.entityHit.setDead();
+                if(!worldObj.isRemote) {
+                    int pokemonId = ((EntityPokemon)result.entityHit).getPokemonId();
+                    PokeModGo.instance.pokedexManager.addPokemon((EntityPlayer)getThrower(), pokemonId);
+                    result.entityHit.setDead();
+                }
             } else {
                 result.entityHit.attackEntityFrom(DamageSource.causeThrownDamage(this, this.getThrower()), 0);
             }

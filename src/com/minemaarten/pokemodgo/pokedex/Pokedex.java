@@ -36,7 +36,16 @@ public class Pokedex{
         pokemonIndeces.add(id);
     }
 
+    public List<Integer> getAllPokemonIds(){
+        return pokemonIndeces;
+    }
+
     public List<Future<Pokemon>> getAllPokemon(){
         return pokemonIndeces.stream().map(x -> PokeModGo.instance.pokemonCache.getPokemon(x)).collect(Collectors.toList());
+    }
+
+    public void load(List<Integer> pokemonIndeces){
+        this.pokemonIndeces.clear();
+        this.pokemonIndeces.addAll(pokemonIndeces);
     }
 }
