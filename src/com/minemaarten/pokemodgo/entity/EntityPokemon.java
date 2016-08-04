@@ -61,12 +61,12 @@ public class EntityPokemon extends EntityCreature{
     @Override
     public boolean getCanSpawnHere(){
         //  System.out.println("Trying to spawn pokemon..");
-        if(!super.getCanSpawnHere()) return false;
+        //if(!super.getCanSpawnHere()) return false;
 
         Pokemon pokemon = PokeModGo.instance.pokemonSpawnRules.getRandomPokemonFor(worldObj.getBiomeGenForCoords(getPosition()));
         if(pokemon != null) {
             setPokemonId(pokemon.id);
-            System.out.println("Spawned " + pokemon.name + " at " + getPosition());
+            // System.out.println("Spawned " + pokemon.name + " at " + getPosition());
             return true;
         } else {
             return false;
