@@ -25,7 +25,7 @@ public class PokemonCache{
 
     public void buildCache(){
         //long start = System.nanoTime();
-        for(int i = 1; i <= 151; i++) {
+        for(int i = 1; i <= PokeModGo.MAX_POKEMON_ID; i++) {
             getPokemon(i);
         }
         /* try {

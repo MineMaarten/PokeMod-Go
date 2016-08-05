@@ -1,14 +1,17 @@
 package com.minemaarten.pokemodgo.event;
 
 import net.minecraft.world.biome.Biome.SpawnListEntry;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.event.world.WorldEvent.PotentialSpawns;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import com.minemaarten.pokemodgo.entity.EntityPokemonFlying;
 import com.minemaarten.pokemodgo.entity.EntityPokemonGround;
 import com.minemaarten.pokemodgo.entity.EntityPokemonWater;
+import com.minemaarten.pokemodgo.persistency.PokemodWorldData;
 
 public class PokeModEventHandler{
 
@@ -32,12 +35,24 @@ public class PokeModEventHandler{
         }*/
     }
 
-    private final SpawnListEntry POKEMON_SPAWN_GROUND_ENTRY = new SpawnListEntry(EntityPokemonGround.class, 10, 1, 1);
-    private final SpawnListEntry POKEMON_SPAWN_WATER_ENTRY = new SpawnListEntry(EntityPokemonWater.class, 10, 1, 1);
+    private final SpawnListEntry POKEMON_SPAWN_GROUND_ENTRY = new SpawnListEntry(EntityPokemonGround.class, 1, 1, 1);
+    private final SpawnListEntry POKEMON_SPAWN_FLY_ENTRY = new SpawnListEntry(EntityPokemonFlying.class, 1, 1, 1);
+    private final SpawnListEntry POKEMON_SPAWN_WATER_ENTRY = new SpawnListEntry(EntityPokemonWater.class, 1, 1, 1);
 
     @SubscribeEvent
     public void onEntitySpawnListGathering(PotentialSpawns event){
         event.getList().add(POKEMON_SPAWN_GROUND_ENTRY);
         event.getList().add(POKEMON_SPAWN_WATER_ENTRY);
+        event.getList().add(POKEMON_SPAWN_FLY_ENTRY);
+    }
+
+    @SubscribeEvent
+    public void onWorldLoad(WorldEvent.Load event){
+        if(!event.getWorld().isRemote) {
+            if(event.getWorld().provider.getDimension() == 0) {
+                PokemodWorldData.overworld = event.getWorld();
+                event.getWorld().loadItemData(PokemodWorldData.class, PokemodWorldData.DATA_KEY);
+            }
+        }
     }
 }

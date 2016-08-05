@@ -1,6 +1,7 @@
 package com.minemaarten.pokemodgo.entity;
 
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.util.DamageSource;
@@ -11,6 +12,8 @@ import net.minecraft.world.World;
 import com.minemaarten.pokemodgo.PokeModGo;
 
 public class EntityPokeball extends EntityThrowable{
+    private static final int ZUBAT_ID = 41;
+
     public EntityPokeball(World worldIn){
         super(worldIn);
     }
@@ -29,14 +32,21 @@ public class EntityPokeball extends EntityThrowable{
     @Override
     protected void onImpact(RayTraceResult result){
         if(result.entityHit != null) {
-            if(result.entityHit instanceof EntityPokemon && getThrower() instanceof EntityPlayer) {
-                if(!worldObj.isRemote) {
-                    int pokemonId = ((EntityPokemon)result.entityHit).getPokemonId();
-                    PokeModGo.instance.pokedexManager.addPokemon((EntityPlayer)getThrower(), pokemonId);
-                    result.entityHit.setDead();
+            if(getThrower() instanceof EntityPlayer) {
+                if(result.entityHit instanceof EntityPokemon) {
+                    if(!worldObj.isRemote) {
+                        int pokemonId = ((EntityPokemon)result.entityHit).getPokemonId();
+                        PokeModGo.instance.pokedexManager.addPokemon((EntityPlayer)getThrower(), pokemonId);
+                        result.entityHit.setDead();
+                    }
+                } else if(result.entityHit instanceof EntityBat) {
+                    if(!worldObj.isRemote) {
+                        PokeModGo.instance.pokedexManager.addPokemon((EntityPlayer)getThrower(), ZUBAT_ID);
+                        result.entityHit.setDead();
+                    }
+                } else {
+                    result.entityHit.attackEntityFrom(DamageSource.causeThrownDamage(this, this.getThrower()), 0);
                 }
-            } else {
-                result.entityHit.attackEntityFrom(DamageSource.causeThrownDamage(this, this.getThrower()), 0);
             }
         }
 

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.minemaarten.pokemodgo.PokeModGo;
 import com.minemaarten.pokemodgo.pokemon.Pokemon;
@@ -42,6 +43,10 @@ public class Pokedex{
 
     public List<Future<Pokemon>> getAllPokemon(){
         return pokemonIndeces.stream().map(x -> PokeModGo.instance.pokemonCache.getPokemon(x)).collect(Collectors.toList());
+    }
+
+    public List<Future<Pokemon>> getUncaughtPokemon(){
+        return IntStream.range(1, PokeModGo.MAX_POKEMON_ID).filter(x -> !pokemonIndeces.contains(x)).mapToObj(x -> PokeModGo.instance.pokemonCache.getPokemon(x)).collect(Collectors.toList());
     }
 
     public void load(List<Integer> pokemonIndeces){

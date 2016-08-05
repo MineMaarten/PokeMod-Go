@@ -8,4 +8,14 @@ public class EntityPokemonWater extends EntityPokemon{
         super(worldIn);
     }
 
+    @Override
+    public boolean isNotColliding(){
+        return this.worldObj.checkNoEntityCollision(this.getEntityBoundingBox(), this);
+    }
+
+    @Override
+    public boolean canBreatheUnderwater(){
+        return true;
+    }
+
 }

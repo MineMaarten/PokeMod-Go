@@ -1,20 +1,27 @@
 package com.minemaarten.pokemodgo.pokemon;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import net.minecraft.init.Biomes;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.village.VillageCollection;
+import net.minecraft.world.EnumSkyBlock;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.Biome;
 
 import com.minemaarten.pokemodgo.PokeModGo;
+import com.minemaarten.pokemodgo.persistency.PokemodWorldData;
 
 public class PokemonSpawnRules{
+    private static final String FIRE_TYPE_KEY = "fire";
     private final Map<Biome, Set<String>> biomeToHabitats = new HashMap<Biome, Set<String>>();
 
     public void init(){
@@ -34,7 +41,7 @@ public class PokemonSpawnRules{
         register(Biomes.FOREST_HILLS, "forest", "mountain");
         register(Biomes.FROZEN_OCEAN, "waters-edge");
         register(Biomes.FROZEN_RIVER, "waters-edge");
-        register(Biomes.HELL, "fire"); //Not a habitat
+        register(Biomes.HELL, FIRE_TYPE_KEY); //Not a habitat
         register(Biomes.ICE_MOUNTAINS, "mountain");
         register(Biomes.ICE_PLAINS, "grassland");
         register(Biomes.JUNGLE, "forest");
@@ -70,7 +77,7 @@ public class PokemonSpawnRules{
         register(Biomes.PLAINS, "grassland");
         register(Biomes.REDWOOD_TAIGA, "forest");
         register(Biomes.REDWOOD_TAIGA_HILLS, "forest");
-        register(Biomes.RIVER, "sea", "waters-edge");
+        register(Biomes.RIVER, "sea");
         register(Biomes.ROOFED_FOREST, "forest");
         register(Biomes.SAVANNA, "grassland");
         register(Biomes.SAVANNA_PLATEAU, "grassland");
@@ -88,13 +95,41 @@ public class PokemonSpawnRules{
         biomeToHabitats.put(biome, set);
     }
 
-    public Pokemon getRandomPokemonFor(Biome biome){
-        Set<String> habitats = biomeToHabitats.get(biome);
+    public Pokemon getRandomPokemonFor(boolean water, WorldServer world, BlockPos pos){
+        Biome biome = world.getBiomeGenForCoords(pos);
+
+        Set<String> habitats;
+        if(!water && biome != Biomes.SKY && biome != Biomes.HELL && world.getLightFor(EnumSkyBlock.SKY, pos) < 8) {
+            habitats = new HashSet<String>(Arrays.asList("cave"));
+        } else {
+            habitats = biomeToHabitats.get(biome);
+            if(isInVillage(world, pos)) {
+                if(habitats == null) habitats = new HashSet<String>();
+                habitats.add("urban");
+            }
+        }
+
         if(habitats != null && !habitats.isEmpty()) {
-            List<Pokemon> matchingPokemon = PokeModGo.instance.pokemonCache.getLoadedPokemon().filter(x -> habitats.contains(x.habitat)).collect(Collectors.toList());
-            return matchingPokemon.isEmpty() ? null : matchingPokemon.get(new Random().nextInt(matchingPokemon.size()));
+            Stream<Pokemon> matchingPokemon;
+            if(!habitats.contains("rare") && habitats.contains(FIRE_TYPE_KEY)) {
+                matchingPokemon = PokeModGo.instance.pokemonCache.getLoadedPokemon().filter(x -> x.stringTypes.contains("fire"));
+            } else {
+                final Set<String> finalHabitats = habitats;
+                matchingPokemon = PokeModGo.instance.pokemonCache.getLoadedPokemon().filter(x -> finalHabitats.contains(x.habitat) && !x.stringTypes.contains("fire"));
+            }
+            if(habitats.contains("rare")) {
+                matchingPokemon = matchingPokemon.filter(x -> !PokemodWorldData.getInstance().hasPokemonSpawnedAlready(x.id));
+            }
+
+            List<Pokemon> matchingList = matchingPokemon.collect(Collectors.toList());
+            return matchingList.isEmpty() ? null : matchingList.get(world.rand.nextInt(matchingList.size()));
         } else {
             return null;
         }
+    }
+
+    private boolean isInVillage(WorldServer world, BlockPos pos){
+        VillageCollection villages = world.getVillageCollection();
+        return villages.getVillageList().stream().anyMatch(x -> x.isBlockPosWithinSqVillageRadius(pos));
     }
 }
