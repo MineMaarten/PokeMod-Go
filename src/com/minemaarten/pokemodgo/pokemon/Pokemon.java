@@ -5,12 +5,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
@@ -18,6 +21,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -46,6 +50,7 @@ public class Pokemon{
     public final String name;
     public final Set<String> stringTypes = new HashSet<String>();
     public final String habitat;
+    public final String description;
 
     /**
      * Gson constructor
@@ -54,6 +59,7 @@ public class Pokemon{
         id = 0;
         name = "";
         habitat = null;
+        description = "";
     }
 
     protected Pokemon(int id) throws IOException{
@@ -88,6 +94,16 @@ public class Pokemon{
                 }
             }
             name = tempName;
+
+            String tempDescription = "";
+            for(JsonElement element : root.get("flavor_text_entries").getAsJsonArray()) {
+                JsonObject o = element.getAsJsonObject();
+                if(o.get("language").getAsJsonObject().get("name").getAsString().equals("en")) {
+                    tempDescription = o.get("flavor_text").getAsString();
+                }
+            }
+
+            description = tempDescription;
         } finally {
             if(stream != null) stream.close();
         }
@@ -101,6 +117,13 @@ public class Pokemon{
         connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
         connection.connect();
         return connection.getInputStream();
+    }
+
+    public void addTooltip(List<String> tooltip){
+        tooltip.add(TextFormatting.GOLD + name);
+        tooltip.addAll(Arrays.asList(description.split("\\f|\\n")).stream().map(x -> TextFormatting.BLUE + x).collect(Collectors.toList()));
+        tooltip.add(TextFormatting.DARK_PURPLE + "Type: " + StringUtils.join(stringTypes, ", "));
+        tooltip.add(TextFormatting.DARK_GREEN + "Habitat: " + habitat);
     }
 
     @SideOnly(Side.CLIENT)
