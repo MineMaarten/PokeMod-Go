@@ -12,7 +12,10 @@ import java.util.stream.Stream;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
+
+import org.apache.commons.lang3.text.WordUtils;
 
 import com.minemaarten.pokemodgo.PokeModGo;
 import com.minemaarten.pokemodgo.client.gui.widget.WidgetTextField;
@@ -33,13 +36,30 @@ public class GuiPokedex extends GuiBase{
     private static SortMode sortMode = SortMode.ID;
     private static String visiblePokemonType = "All";
     private Pokedex pokedex = PokemodWorldData.getInstance().getPokedexManager(true).getPokedex(Minecraft.getMinecraft().thePlayer);
+    private GuiButton showButton, sortButton;
 
     private enum ShowMode{
         ALL, CAUGHT, UNCAUGHT;
+
+        public String getName(){
+            return I18n.format("pokemodgo.gui.show_mode." + name().toLowerCase());
+        }
+
+        public String getDesc(){
+            return I18n.format("pokemodgo.gui.show_mode." + name().toLowerCase() + ".desc");
+        }
     }
 
     private enum SortMode{
         ID, NAME, CATCH_ORDER;
+
+        public String getName(){
+            return I18n.format("pokemodgo.gui.sort_mode." + name().toLowerCase());
+        }
+
+        public String getDesc(){
+            return I18n.format("pokemodgo.gui.sort_mode." + name().toLowerCase() + ".desc");
+        }
     }
 
     private WidgetTextField searchWidget;
@@ -53,9 +73,9 @@ public class GuiPokedex extends GuiBase{
         int guiTop = height / 2 - HEIGHT / 2;
         // buttonList.add(new GuiButton(0, guiLeft + 200, guiTop + 40, 20, 20, "^"));
         // buttonList.add(new GuiButton(1, guiLeft + 200, guiTop + 70, 20, 20, "V"));
-        buttonList.add(new GuiButton(2, guiLeft + 5, guiTop + 66, 52, 20, showMode.name()));
-        buttonList.add(new GuiButton(3, guiLeft + 5, guiTop + 88, 52, 20, visiblePokemonType));
-        buttonList.add(new GuiButton(4, guiLeft + 5, guiTop + 127, 52, 20, sortMode.name()));
+        buttonList.add(showButton = new GuiButton(2, guiLeft + 5, guiTop + 66, 52, 20, showMode.getName()));
+        buttonList.add(new GuiButton(3, guiLeft + 5, guiTop + 88, 52, 20, visiblePokemonType.substring(0, 1).toUpperCase() + visiblePokemonType.substring(1)));
+        buttonList.add(sortButton = new GuiButton(4, guiLeft + 5, guiTop + 127, 52, 20, sortMode.getName()));
         searchWidget = new WidgetTextField(fontRendererObj, guiLeft + 5, guiTop + 36, 52, fontRendererObj.FONT_HEIGHT);
         addWidget(searchWidget);
         scrollBar = new WidgetVerticalScrollbar(guiLeft + 240, guiTop + 19, 170).setListening(true);
@@ -125,6 +145,19 @@ public class GuiPokedex extends GuiBase{
             }
         }
 
+        if(new Rectangle(showButton.xPosition, showButton.yPosition, showButton.width, showButton.height).contains(mouseX, mouseY)) {
+            String[] lines = WordUtils.wrap(showMode.getDesc(), 50).split(System.getProperty("line.separator"));
+            for(String locLine : lines) {
+                tooltip.add(locLine);
+            }
+        }
+        if(new Rectangle(sortButton.xPosition, sortButton.yPosition, sortButton.width, sortButton.height).contains(mouseX, mouseY)) {
+            String[] lines = WordUtils.wrap(sortMode.getDesc(), 50).split(System.getProperty("line.separator"));
+            for(String locLine : lines) {
+                tooltip.add(locLine);
+            }
+        }
+
         drawHoveringText(tooltip, mouseX, mouseY);
     }
 
@@ -178,7 +211,7 @@ public class GuiPokedex extends GuiBase{
              break;*/
             case 2:
                 showMode = ShowMode.values()[(showMode.ordinal() + 1) % ShowMode.values().length];
-                button.displayString = showMode.name();
+                button.displayString = showMode.getName();
                 scrollBar.setCurrentState(0);
                 break;
             case 3:
@@ -188,12 +221,12 @@ public class GuiPokedex extends GuiBase{
                 } else {
                     visiblePokemonType = availablePokemonTypes.get(index);
                 }
-                button.displayString = visiblePokemonType;
+                button.displayString = visiblePokemonType.substring(0, 1).toUpperCase() + visiblePokemonType.substring(1);
                 scrollBar.setCurrentState(0);
                 break;
             case 4:
                 sortMode = SortMode.values()[(sortMode.ordinal() + 1) % SortMode.values().length];
-                button.displayString = sortMode.name();
+                button.displayString = sortMode.getName();
                 scrollBar.setCurrentState(0);
                 break;
         }

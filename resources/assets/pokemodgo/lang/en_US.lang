@@ -1,0 +1,17 @@
+﻿
+pokemodgo.gui.sort_mode.id=ID
+pokemodgo.gui.sort_mode.name=Name
+pokemodgo.gui.sort_mode.catch_order=Catch ord.
+
+pokemodgo.gui.sort_mode.id.desc=Sort by Pokemon ID. Groups by evolutions.
+pokemodgo.gui.sort_mode.name.desc=Sorts Pokemon alphabetically.
+pokemodgo.gui.sort_mode.catch_order.desc=Sorts Pokemon by the order in which they were caught. First caught is displayed first.
+
+
+pokemodgo.gui.show_mode.all=All
+pokemodgo.gui.show_mode.caught=Caught
+pokemodgo.gui.show_mode.uncaught=Uncaught
+
+pokemodgo.gui.show_mode.all.desc=Show both caught and uncaught Pokemon.
+pokemodgo.gui.show_mode.caught.desc=Only show the caught Pokemon, including duplicates.
+pokemodgo.gui.show_mode.uncaught.desc=Only show the Pokemon left to be catched.
