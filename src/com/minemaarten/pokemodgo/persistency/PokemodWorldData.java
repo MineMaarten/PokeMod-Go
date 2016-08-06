@@ -9,6 +9,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 
 import com.minemaarten.pokemodgo.lib.Constants;
+import com.minemaarten.pokemodgo.pokedex.PokedexManager;
 
 public class PokemodWorldData extends WorldSavedData{
 
@@ -16,6 +17,8 @@ public class PokemodWorldData extends WorldSavedData{
     public static World overworld;
 
     private Set<Integer> spawnedRarePokemon = new HashSet<Integer>();
+    private String pokedexJson = "";
+    private PokedexManager clientPokedexManager, serverPokedexManager;
 
     public PokemodWorldData(String name){
         super(name);
@@ -41,6 +44,8 @@ public class PokemodWorldData extends WorldSavedData{
         for(int i = 0; i < list.tagCount(); i++) {
             spawnedRarePokemon.add(list.getCompoundTagAt(i).getInteger("id"));
         }
+
+        pokedexJson = nbt.getString("pokedexes");
     }
 
     @Override
@@ -52,6 +57,8 @@ public class PokemodWorldData extends WorldSavedData{
             list.appendTag(t);
         }
         tag.setTag("spawnedRarePokemon", list);
+
+        tag.setString("pokedexes", pokedexJson);
         return tag;
     }
 
@@ -71,7 +78,26 @@ public class PokemodWorldData extends WorldSavedData{
         return spawnedRarePokemon.contains(id);
     }
 
+    public String getPokedexJson(){
+        return pokedexJson;
+    }
+
+    public void setPokedexJson(String json){
+        pokedexJson = json;
+        save();
+    }
+
     private void save(){
         markDirty();
+    }
+
+    public PokedexManager getPokedexManager(boolean client){
+        if(client) {
+            if(clientPokedexManager == null) clientPokedexManager = new PokedexManager();
+            return clientPokedexManager;
+        } else {
+            if(serverPokedexManager == null) serverPokedexManager = PokedexManager.create();
+            return serverPokedexManager;
+        }
     }
 }

@@ -23,7 +23,6 @@ import com.minemaarten.pokemodgo.event.PokeModEventHandler;
 import com.minemaarten.pokemodgo.init.ModItems;
 import com.minemaarten.pokemodgo.lib.Constants;
 import com.minemaarten.pokemodgo.network.NetworkHandler;
-import com.minemaarten.pokemodgo.pokedex.PokedexManager;
 import com.minemaarten.pokemodgo.pokemon.Pokemon;
 import com.minemaarten.pokemodgo.pokemon.PokemonCache;
 import com.minemaarten.pokemodgo.pokemon.PokemonSpawnRules;
@@ -32,7 +31,6 @@ import com.minemaarten.pokemodgo.proxy.CommonProxy;
 @Mod(modid = Constants.MOD_ID, name = "PokeMod Go", acceptedMinecraftVersions = "[1.9.4,]")
 public class PokeModGo{
     public PokemonCache pokemonCache;
-    public PokedexManager pokedexManager;
     public final PokemonSpawnRules pokemonSpawnRules = new PokemonSpawnRules();
 
     @SidedProxy(clientSide = "com.minemaarten.pokemodgo.proxy.ClientProxy", serverSide = "com.minemaarten.pokemodgo.proxy.CommonProxy")
@@ -48,7 +46,6 @@ public class PokeModGo{
 
         pokemonCache = new PokemonCache(event.getModConfigurationDirectory());
         pokemonCache.buildCache();
-        pokedexManager = PokedexManager.create(event.getModConfigurationDirectory());
 
         ModItems.init();
 

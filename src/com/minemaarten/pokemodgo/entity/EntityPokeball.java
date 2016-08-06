@@ -9,7 +9,7 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
-import com.minemaarten.pokemodgo.PokeModGo;
+import com.minemaarten.pokemodgo.persistency.PokemodWorldData;
 
 public class EntityPokeball extends EntityThrowable{
     private static final int ZUBAT_ID = 41;
@@ -36,12 +36,12 @@ public class EntityPokeball extends EntityThrowable{
                 if(result.entityHit instanceof EntityPokemon) {
                     if(!worldObj.isRemote) {
                         int pokemonId = ((EntityPokemon)result.entityHit).getPokemonId();
-                        PokeModGo.instance.pokedexManager.addPokemon((EntityPlayer)getThrower(), pokemonId);
+                        PokemodWorldData.getInstance().getPokedexManager(false).addPokemon((EntityPlayer)getThrower(), pokemonId);
                         result.entityHit.setDead();
                     }
                 } else if(result.entityHit instanceof EntityBat) {
                     if(!worldObj.isRemote) {
-                        PokeModGo.instance.pokedexManager.addPokemon((EntityPlayer)getThrower(), ZUBAT_ID);
+                        PokemodWorldData.getInstance().getPokedexManager(false).addPokemon((EntityPlayer)getThrower(), ZUBAT_ID);
                         result.entityHit.setDead();
                     }
                 } else {

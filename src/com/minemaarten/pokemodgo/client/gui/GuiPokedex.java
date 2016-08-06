@@ -14,8 +14,8 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
 
-import com.minemaarten.pokemodgo.PokeModGo;
 import com.minemaarten.pokemodgo.lib.Constants;
+import com.minemaarten.pokemodgo.persistency.PokemodWorldData;
 import com.minemaarten.pokemodgo.pokedex.Pokedex;
 import com.minemaarten.pokemodgo.pokemon.Pokemon;
 
@@ -75,7 +75,7 @@ public class GuiPokedex extends GuiScreen{
     }
 
     private Stream<Pokemon> getAllApplicablePokemon(){
-        Pokedex pokedex = PokeModGo.instance.pokedexManager.getPokedex(Minecraft.getMinecraft().thePlayer);
+        Pokedex pokedex = PokemodWorldData.getInstance().getPokedexManager(true).getPokedex(Minecraft.getMinecraft().thePlayer);
         List<Future<Pokemon>> pokemons = showCaughtPokemon ? pokedex.getAllPokemon() : pokedex.getUncaughtPokemon();
         return pokemons.stream().map(x -> {
             try {

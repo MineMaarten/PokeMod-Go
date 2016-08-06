@@ -7,7 +7,7 @@ import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
 
-import com.minemaarten.pokemodgo.PokeModGo;
+import com.minemaarten.pokemodgo.persistency.PokemodWorldData;
 
 public class PacketSyncPokedex extends AbstractPacket<PacketSyncPokedex>{
 
@@ -16,7 +16,7 @@ public class PacketSyncPokedex extends AbstractPacket<PacketSyncPokedex>{
     public PacketSyncPokedex(){}
 
     public PacketSyncPokedex(EntityPlayer player){
-        pokemonIds = PokeModGo.instance.pokedexManager.getPokedex(player).getAllPokemonIds();
+        pokemonIds = PokemodWorldData.getInstance().getPokedexManager(false).getPokedex(player).getAllPokemonIds();
     }
 
     @Override
@@ -38,7 +38,7 @@ public class PacketSyncPokedex extends AbstractPacket<PacketSyncPokedex>{
 
     @Override
     public void handleClientSide(EntityPlayer player){
-        PokeModGo.instance.pokedexManager.getPokedex(player).load(pokemonIds);
+        PokemodWorldData.getInstance().getPokedexManager(true).getPokedex(player).load(pokemonIds);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.minemaarten.pokemodgo.pokedex;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,15 +9,14 @@ import java.util.UUID;
 import net.minecraft.entity.player.EntityPlayer;
 
 import com.minemaarten.pokemodgo.lib.GsonUtils;
+import com.minemaarten.pokemodgo.persistency.PokemodWorldData;
 import com.minemaarten.pokemodgo.pokemon.Pokemon;
 
 public class PokedexManager{
     private List<Pokedex> pokedexes = new ArrayList<Pokedex>();
     private transient Map<UUID, Pokedex> playerToPokedex = new HashMap<UUID, Pokedex>();
-    private transient File saveFile;
 
-    public void init(File saveFile){
-        this.saveFile = saveFile;
+    public void init(){
         for(Pokedex pokedex : pokedexes) {
             playerToPokedex.put(pokedex.getPlayerUUID(), pokedex);
         }
@@ -48,15 +46,18 @@ public class PokedexManager{
     }
 
     private void save(){
-        GsonUtils.writeToFile(this, saveFile);
+        PokemodWorldData.getInstance().setPokedexJson(GsonUtils.toJson(this));
     }
 
-    public static PokedexManager create(File configFolder){
-        new File(configFolder.getAbsolutePath() + "\\PokeModGo\\PlayerData\\").mkdirs();
-        File file = new File(configFolder.getAbsolutePath() + "\\PokeModGo\\PlayerData\\CaughtPokemon.json");
-        PokedexManager pokedexManager = GsonUtils.readFromFile(PokedexManager.class, file);
-        if(pokedexManager == null) pokedexManager = new PokedexManager();
-        pokedexManager.init(file);
+    public static PokedexManager create(){
+        String json = PokemodWorldData.getInstance().getPokedexJson();
+        PokedexManager pokedexManager;
+        if(json.equals("")) {
+            pokedexManager = new PokedexManager();
+        } else {
+            pokedexManager = GsonUtils.readFromJson(PokedexManager.class, json);
+        }
+        pokedexManager.init();
         return pokedexManager;
     }
 }

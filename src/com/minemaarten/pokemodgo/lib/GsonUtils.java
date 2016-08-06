@@ -48,4 +48,12 @@ public class GsonUtils{
             }
         }
     }
+
+    public static <T> T readFromJson(Class<T> type, String json){
+        return new Gson().fromJson(json, type);
+    }
+
+    public static String toJson(Object o){
+        return new Gson().toJson(o);
+    }
 }
