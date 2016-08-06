@@ -120,7 +120,7 @@ public class Pokemon{
     }
 
     public void addTooltip(List<String> tooltip){
-        tooltip.add(TextFormatting.GOLD + name);
+        tooltip.add(TextFormatting.GOLD + "#" + id + " " + name);
         tooltip.addAll(Arrays.asList(description.split("\\f|\\n")).stream().map(x -> TextFormatting.BLUE + x).collect(Collectors.toList()));
         tooltip.add(TextFormatting.DARK_PURPLE + "Type: " + StringUtils.join(stringTypes, ", "));
         tooltip.add(TextFormatting.DARK_GREEN + "Habitat: " + habitat);
