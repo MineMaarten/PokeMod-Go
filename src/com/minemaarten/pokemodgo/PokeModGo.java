@@ -1,11 +1,13 @@
 package com.minemaarten.pokemodgo;
 
+import java.io.File;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import net.minecraft.entity.EntityLiving.SpawnPlacementType;
 import net.minecraft.entity.EntitySpawnPlacementRegistry;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -14,6 +16,8 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import com.minemaarten.pokemodgo.entity.EntityPokeball;
 import com.minemaarten.pokemodgo.entity.EntityPokemon;
@@ -40,10 +44,16 @@ public class PokeModGo{
     @Instance(Constants.MOD_ID)
     public static PokeModGo instance;
 
-    public static int MAX_POKEMON_ID = 151;
+    public static int MIN_POKEMON_ID;
+    public static int MAX_POKEMON_ID;
 
     @EventHandler
     public void PreInit(FMLPreInitializationEvent event){
+
+        Configuration config = new Configuration(new File(event.getModConfigurationDirectory().getAbsolutePath() + "\\PokeModGo\\pokemodgo.cfg"));
+        MIN_POKEMON_ID = config.getInt("min_pokemon_id", Configuration.CATEGORY_GENERAL, 1, 1, Integer.MAX_VALUE, "Lower bound of the Pokemon id range used in this instance.");
+        MAX_POKEMON_ID = config.getInt("max_pokemon_id", Configuration.CATEGORY_GENERAL, 151, 1, Integer.MAX_VALUE, "Higher bound of the Pokemon id range used in this instance (inclusive).");
+        if(config.hasChanged()) config.save();
 
         pokemonCache = new PokemonCache(event.getModConfigurationDirectory());
         pokemonCache.buildCache();
@@ -58,6 +68,8 @@ public class PokeModGo{
         EntitySpawnPlacementRegistry.setPlacementType(EntityPokemonFlying.class, SpawnPlacementType.IN_AIR);
         EntitySpawnPlacementRegistry.setPlacementType(EntityPokemonGround.class, SpawnPlacementType.ON_GROUND);
         EntitySpawnPlacementRegistry.setPlacementType(EntityPokemonWater.class, SpawnPlacementType.IN_WATER);
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(ModItems.pokedex, "ppp", "pdp", "ppp", 'p', ModItems.pokeball, 'd', "gemDiamond"));
 
         MinecraftForge.EVENT_BUS.register(new PokeModEventHandler());
         proxy.preInit();

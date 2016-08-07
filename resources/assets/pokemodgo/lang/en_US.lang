@@ -2,6 +2,9 @@
 item.pokeball.name=Pokeball
 item.pokedex.name=Pokedex
 
+item.pokeball.tooltip=20%% chance to drop from a killed Pokemon.
+item.pokedex.tooltip=Crafted by surrounding a Diamond by 8 Pokeballs.
+
 entity.pokemodgo.pokemon=Pokemon
 
 pokemodgo.gui.sort_mode.id=ID

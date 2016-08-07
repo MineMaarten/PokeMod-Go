@@ -1,11 +1,15 @@
 package com.minemaarten.pokemodgo.event;
 
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackMelee;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.biome.Biome.SpawnListEntry;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.event.world.WorldEvent.PotentialSpawns;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -13,9 +17,11 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import com.minemaarten.pokemodgo.entity.EntityPokemon;
 import com.minemaarten.pokemodgo.entity.EntityPokemonFlying;
 import com.minemaarten.pokemodgo.entity.EntityPokemonGround;
 import com.minemaarten.pokemodgo.entity.EntityPokemonWater;
+import com.minemaarten.pokemodgo.init.ModItems;
 import com.minemaarten.pokemodgo.persistency.PokemodWorldData;
 import com.minemaarten.pokemodgo.pokemon.Pokemon;
 
@@ -72,6 +78,17 @@ public class PokeModEventHandler{
                 entity.targetTasks.addTask(1, new EntityAINearestAttackableTarget<EntityPlayer>(entity, EntityPlayer.class, true));
                 entity.getAttributeMap().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
                 entity.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(2.0D);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onEntityDrops(LivingDropsEvent event){
+        EntityLivingBase entity = event.getEntityLiving();
+        if(entity instanceof EntityPokemon) {
+            if(entity.getRNG().nextInt(5) == 0) {
+                EntityItem pokeballs = new EntityItem(entity.worldObj, entity.posX, entity.posY, entity.posZ, new ItemStack(ModItems.pokeball, entity.getRNG().nextInt(3) + 1));
+                event.getDrops().add(pokeballs);
             }
         }
     }

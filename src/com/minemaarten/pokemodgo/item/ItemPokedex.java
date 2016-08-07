@@ -1,6 +1,9 @@
 package com.minemaarten.pokemodgo.item;
 
+import java.util.List;
+
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -30,5 +33,11 @@ public class ItemPokedex extends Item{
             NetworkHandler.sendTo(new PacketSyncPokedex(playerIn), (EntityPlayerMP)playerIn);
         }
         return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemStackIn);
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced){
+        super.addInformation(stack, playerIn, tooltip, advanced);
+        tooltip.add(I18n.format("item.pokedex.tooltip"));
     }
 }

@@ -1,5 +1,8 @@
 package com.minemaarten.pokemodgo.item;
 
+import java.util.List;
+
+import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
@@ -38,5 +41,11 @@ public class ItemPokeball extends Item{
 
         playerIn.addStat(StatList.getObjectUseStats(this));
         return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemStackIn);
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced){
+        super.addInformation(stack, playerIn, tooltip, advanced);
+        tooltip.add(I18n.format("item.pokeball.tooltip"));
     }
 }

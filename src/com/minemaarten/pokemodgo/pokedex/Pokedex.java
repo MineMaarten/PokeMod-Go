@@ -50,7 +50,7 @@ public class Pokedex{
     }
 
     public List<Future<Pokemon>> getUncaughtPokemon(){
-        return IntStream.range(1, PokeModGo.MAX_POKEMON_ID + 1).filter(x -> !pokemonIndeces.contains(x)).mapToObj(x -> PokeModGo.instance.pokemonCache.getPokemon(x)).collect(Collectors.toList());
+        return IntStream.range(PokeModGo.MIN_POKEMON_ID, PokeModGo.MAX_POKEMON_ID + 1).filter(x -> !pokemonIndeces.contains(x)).mapToObj(x -> PokeModGo.instance.pokemonCache.getPokemon(x)).collect(Collectors.toList());
     }
 
     public void load(List<Integer> pokemonIndeces){
