@@ -2,6 +2,8 @@
 item.pokeball.name=Pokeball
 item.pokedex.name=Pokedex
 
+entity.pokemodgo.pokemon=Pokemon
+
 pokemodgo.gui.sort_mode.id=ID
 pokemodgo.gui.sort_mode.name=Name
 pokemodgo.gui.sort_mode.catch_order=Catch ord.

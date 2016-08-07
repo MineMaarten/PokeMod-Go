@@ -1,5 +1,8 @@
 package com.minemaarten.pokemodgo.entity;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
@@ -35,7 +38,7 @@ public class EntityPokemon extends EntityCreature{
     @Override
     protected void entityInit(){
         super.entityInit();
-        dataManager.register(POKEMON_ID, 1);
+        dataManager.register(POKEMON_ID, 0);
     }
 
     public EntityPokemon setPokemonId(int id){
@@ -96,6 +99,10 @@ public class EntityPokemon extends EntityCreature{
 
     @Override
     public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, IEntityLivingData livingdata){
+        if(getPokemonId() == 0) {
+            List<Pokemon> pokemons = PokeModGo.instance.pokemonCache.getLoadedPokemon().collect(Collectors.toList());
+            setPokemonId(pokemons.get(worldObj.rand.nextInt(pokemons.size())).id);
+        }
         PokemodWorldData.getInstance().addRarePokemonSpawn(getPokemonId());
         return super.onInitialSpawn(difficulty, livingdata);
     }

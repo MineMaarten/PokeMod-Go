@@ -16,6 +16,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 
 import com.minemaarten.pokemodgo.entity.EntityPokeball;
+import com.minemaarten.pokemodgo.entity.EntityPokemon;
 import com.minemaarten.pokemodgo.entity.EntityPokemonFlying;
 import com.minemaarten.pokemodgo.entity.EntityPokemonGround;
 import com.minemaarten.pokemodgo.entity.EntityPokemonWater;
@@ -49,10 +50,11 @@ public class PokeModGo{
 
         ModItems.init();
 
-        EntityRegistry.registerModEntity(EntityPokemonFlying.class, "pokemon", 0, instance, 64, 1, true, 0xFFFFFFFF, 0xFFFFFFFF);
-        EntityRegistry.registerModEntity(EntityPokemonGround.class, "pokemonGround", 1, instance, 64, 1, true, 0xFFFFFFFF, 0xFFFFFFFF);
-        EntityRegistry.registerModEntity(EntityPokemonWater.class, "pokemonWater", 2, instance, 64, 1, true, 0xFFFFFFFF, 0xFFFFFFFF);
-        EntityRegistry.registerModEntity(EntityPokeball.class, "pokeball", 3, instance, 64, 1, true, 0xFFFFFFFF, 0xFFFFFFFF);
+        EntityRegistry.registerModEntity(EntityPokemonFlying.class, "pokemonFlying", 0, instance, 64, 1, true);
+        EntityRegistry.registerModEntity(EntityPokemonGround.class, "pokemonGround", 1, instance, 64, 1, true);
+        EntityRegistry.registerModEntity(EntityPokemonWater.class, "pokemonWater", 2, instance, 64, 1, true);
+        EntityRegistry.registerModEntity(EntityPokemon.class, "pokemon", 2, instance, 64, 1, true, 0xFFFFFFFF, 0xFFFFFFFF);
+        EntityRegistry.registerModEntity(EntityPokeball.class, "pokeball", 3, instance, 64, 1, true);
         EntitySpawnPlacementRegistry.setPlacementType(EntityPokemonFlying.class, SpawnPlacementType.IN_AIR);
         EntitySpawnPlacementRegistry.setPlacementType(EntityPokemonGround.class, SpawnPlacementType.ON_GROUND);
         EntitySpawnPlacementRegistry.setPlacementType(EntityPokemonWater.class, SpawnPlacementType.IN_WATER);

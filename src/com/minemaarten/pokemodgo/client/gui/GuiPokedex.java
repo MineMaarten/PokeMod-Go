@@ -11,13 +11,14 @@ import java.util.stream.Stream;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 
 import org.apache.commons.lang3.text.WordUtils;
 
 import com.minemaarten.pokemodgo.PokeModGo;
+import com.minemaarten.pokemodgo.client.gui.widget.WidgetPokemon;
 import com.minemaarten.pokemodgo.client.gui.widget.WidgetTextField;
 import com.minemaarten.pokemodgo.client.gui.widget.WidgetVerticalScrollbar;
 import com.minemaarten.pokemodgo.lib.Constants;
@@ -65,6 +66,7 @@ public class GuiPokedex extends GuiBase{
     private WidgetTextField searchWidget;
     private WidgetVerticalScrollbar scrollBar;
     private List<String> availablePokemonTypes = PokeModGo.instance.pokemonCache.getAllTypes();
+    private WidgetPokemon[] pokemonWidgets = new WidgetPokemon[POKEMON_PER_ROW * ROWS];
 
     @Override
     public void initGui(){
@@ -78,6 +80,11 @@ public class GuiPokedex extends GuiBase{
         addWidget(searchWidget);
         scrollBar = new WidgetVerticalScrollbar(guiLeft + 240, guiTop + 19, 170).setListening(true);
         addWidget(scrollBar);
+
+        for(int i = 0; i < pokemonWidgets.length; i++) {
+            pokemonWidgets[i] = new WidgetPokemon(pokedex, guiLeft + POKEMON_START_X + (POKEMON_SIZE + 2) * (i % POKEMON_PER_ROW), guiTop + POKEMON_START_Y + (POKEMON_SIZE + 2) * (i / POKEMON_PER_ROW));
+            addWidget(pokemonWidgets[i]);
+        }
     }
 
     @Override
@@ -99,24 +106,10 @@ public class GuiPokedex extends GuiBase{
             scrollBar.setEnabled(false);
         }
 
-        super.drawScreen(mouseX, mouseY, partialTicks);
-
-        GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         List<Pokemon> pokemons = getVisiblePokemon();
-        for(int i = 0; i < pokemons.size(); i++) {
-            Pokemon p = pokemons.get(i);
-            if(p != null) {
-                p.bindTexture();
-                if(pokedex.hasCaught(p.id)) {
-                    GlStateManager.color(1, 1, 1, 1);
-                } else {
-                    GlStateManager.color(1, 1, 1, 0.5F);
-                }
-                drawModalRectWithCustomSizedTexture(guiLeft + POKEMON_START_X + (POKEMON_SIZE + 2) * (i % POKEMON_PER_ROW), guiTop + POKEMON_START_Y + (POKEMON_SIZE + 2) * (i / POKEMON_PER_ROW), 0, 0, POKEMON_SIZE, POKEMON_SIZE, POKEMON_SIZE, POKEMON_SIZE);
-            }
+        for(int i = 0; i < pokemonWidgets.length; i++) {
+            pokemonWidgets[i].setPokemon(i < pokemons.size() ? pokemons.get(i) : null);
         }
-        GlStateManager.disableBlend();
 
         fontRendererObj.drawString("Pokedex", guiLeft + 82, guiTop + 5, 0xFFFFFF);
         fontRendererObj.drawString("Search: ", guiLeft + 5, guiTop + 25, 0xFFFFFF);
@@ -125,23 +118,11 @@ public class GuiPokedex extends GuiBase{
 
         fontRendererObj.drawString("Results: " + getAllApplicablePokemon().count(), guiLeft + 83, guiTop + 196, 0xFFFFFF);
 
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        RenderHelper.disableStandardItemLighting();
+
         //Tooltips
         List<String> tooltip = new ArrayList<String>();
-        for(int i = 0; i < pokemons.size(); i++) {
-            Pokemon p = pokemons.get(i);
-            if(p != null) {
-                int x = guiLeft + POKEMON_START_X + (POKEMON_SIZE + 2) * (i % POKEMON_PER_ROW);
-                int y = guiTop + POKEMON_START_Y + (POKEMON_SIZE + 2) * (i / POKEMON_PER_ROW);
-                Rectangle rect = new Rectangle(x, y, POKEMON_SIZE, POKEMON_SIZE);
-                if(rect.contains(mouseX, mouseY)) {
-                    int firstRow = tooltip.size();
-                    p.addTooltip(tooltip);
-                    if(pokedex.hasCaught(p.id)) {
-                        tooltip.set(firstRow, tooltip.get(firstRow) + " (Caught)");
-                    }
-                }
-            }
-        }
 
         if(new Rectangle(showButton.xPosition, showButton.yPosition, showButton.width, showButton.height).contains(mouseX, mouseY)) {
             String[] lines = WordUtils.wrap(showMode.getDesc(), 50).split(System.getProperty("line.separator"));
