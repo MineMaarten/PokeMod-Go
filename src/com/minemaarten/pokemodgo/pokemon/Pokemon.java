@@ -108,7 +108,7 @@ public class Pokemon{
             if(stream != null) stream.close();
         }
 
-        System.out.println("Loaded " + name + ":" + id + ", types: " + StringUtils.join(stringTypes, ","));
+        //System.out.println("Loaded " + name + ":" + id + ", types: " + StringUtils.join(stringTypes, ","));
 
     }
 

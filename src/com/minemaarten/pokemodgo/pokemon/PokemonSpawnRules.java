@@ -110,12 +110,12 @@ public class PokemonSpawnRules{
         }
 
         if(habitats != null && !habitats.isEmpty()) {
-            Stream<Pokemon> matchingPokemon;
+            Stream<Pokemon> matchingPokemon = PokeModGo.instance.pokemonCache.getLoadedPokemon().filter(x -> PokeModGo.MIN_POKEMON_ID <= x.id && x.id <= PokeModGo.MAX_POKEMON_ID);
             if(!habitats.contains("rare") && habitats.contains(FIRE_TYPE_KEY)) {
-                matchingPokemon = PokeModGo.instance.pokemonCache.getLoadedPokemon().filter(x -> x.stringTypes.contains("fire"));
+                matchingPokemon = matchingPokemon.filter(x -> x.stringTypes.contains("fire"));
             } else {
                 final Set<String> finalHabitats = habitats;
-                matchingPokemon = PokeModGo.instance.pokemonCache.getLoadedPokemon().filter(x -> finalHabitats.contains(x.habitat) && !x.stringTypes.contains("fire") && (!water || x.stringTypes.contains("water")));
+                matchingPokemon = matchingPokemon.filter(x -> finalHabitats.contains(x.habitat) && !x.stringTypes.contains("fire") && (!water || x.stringTypes.contains("water")));
             }
             if(habitats.contains("rare")) {
                 matchingPokemon = matchingPokemon.filter(x -> !x.habitat.equals("rare") || !PokemodWorldData.getInstance().hasPokemonSpawnedAlready(x.id));

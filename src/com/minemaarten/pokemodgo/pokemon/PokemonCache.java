@@ -26,22 +26,9 @@ public class PokemonCache{
     }
 
     public void buildCache(){
-        //long start = System.nanoTime();
         for(int i = PokeModGo.MIN_POKEMON_ID; i <= PokeModGo.MAX_POKEMON_ID; i++) {
             getPokemon(i);
         }
-        /* try {
-              executor.shutdown();
-              executor.awaitTermination(60, TimeUnit.MINUTES);
-             System.out.println("Successfully built cache in " + (System.nanoTime() - start) / 1000000000 + " seconds");
-             Set<String> typeSet = new HashSet<String>();
-             for(Future<Pokemon> pokemon : cache.values()) {
-                 typeSet.addAll(pokemon.get().stringTypes);
-             }
-             System.out.println("All types: " + StringUtils.join(typeSet, ", "));
-         } catch(InterruptedException | ExecutionException e) {
-             e.printStackTrace();
-         }*/
     }
 
     public Future<Pokemon> getPokemon(int id){
@@ -51,7 +38,7 @@ public class PokemonCache{
             if(pokemon != null) {
                 result = ConcurrentUtils.constantFuture(pokemon);
             } else {
-                System.out.println("Requesting new pokemon from pokeapi.co...");
+                //System.out.println("Requesting new pokemon from pokeapi.co...");
                 result = executor.submit(() -> {
                     try {
                         Pokemon p = new Pokemon(id);

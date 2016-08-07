@@ -1,0 +1,21 @@
+~WRL1161.tmp
+/bin
+
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+*.iml
+
+environment.properties
+*.db
+
+.classpath
+.project
+/build
+/eclipse
+.gradle/
+.settings/
