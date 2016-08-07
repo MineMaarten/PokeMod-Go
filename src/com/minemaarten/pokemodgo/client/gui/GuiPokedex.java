@@ -71,8 +71,6 @@ public class GuiPokedex extends GuiBase{
         super.initGui();
         int guiLeft = width / 2 - WIDTH / 2;
         int guiTop = height / 2 - HEIGHT / 2;
-        // buttonList.add(new GuiButton(0, guiLeft + 200, guiTop + 40, 20, 20, "^"));
-        // buttonList.add(new GuiButton(1, guiLeft + 200, guiTop + 70, 20, 20, "V"));
         buttonList.add(showButton = new GuiButton(2, guiLeft + 5, guiTop + 66, 52, 20, showMode.getName()));
         buttonList.add(new GuiButton(3, guiLeft + 5, guiTop + 88, 52, 20, visiblePokemonType.substring(0, 1).toUpperCase() + visiblePokemonType.substring(1)));
         buttonList.add(sortButton = new GuiButton(4, guiLeft + 5, guiTop + 127, 52, 20, sortMode.getName()));

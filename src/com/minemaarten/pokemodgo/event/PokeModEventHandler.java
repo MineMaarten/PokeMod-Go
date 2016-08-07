@@ -1,6 +1,11 @@
 package com.minemaarten.pokemodgo.event;
 
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.EntityAIAttackMelee;
+import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.biome.Biome.SpawnListEntry;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.event.world.WorldEvent.PotentialSpawns;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -12,6 +17,7 @@ import com.minemaarten.pokemodgo.entity.EntityPokemonFlying;
 import com.minemaarten.pokemodgo.entity.EntityPokemonGround;
 import com.minemaarten.pokemodgo.entity.EntityPokemonWater;
 import com.minemaarten.pokemodgo.persistency.PokemodWorldData;
+import com.minemaarten.pokemodgo.pokemon.Pokemon;
 
 public class PokeModEventHandler{
 
@@ -52,6 +58,20 @@ public class PokeModEventHandler{
             if(event.getWorld().provider.getDimension() == 0) {
                 PokemodWorldData.overworld = event.getWorld();
                 event.getWorld().loadItemData(PokemodWorldData.class, PokemodWorldData.DATA_KEY);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onEntityJoinWorld(EntityJoinWorldEvent event){
+        if(!event.getWorld().isRemote && event.getEntity() instanceof EntityPokemonGround) {
+            EntityPokemonGround entity = (EntityPokemonGround)event.getEntity();
+            Pokemon pokemon = entity.getPokemon();
+            if(pokemon != null && pokemon.stringTypes.contains("fighting")) {
+                entity.tasks.addTask(10, new EntityAIAttackMelee(entity, 1, false));
+                entity.targetTasks.addTask(1, new EntityAINearestAttackableTarget<EntityPlayer>(entity, EntityPlayer.class, true));
+                entity.getAttributeMap().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
+                entity.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(2.0D);
             }
         }
     }

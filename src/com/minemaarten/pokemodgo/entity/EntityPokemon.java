@@ -1,12 +1,21 @@
 package com.minemaarten.pokemodgo.entity;
 
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IEntityLivingData;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemAxe;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -20,6 +29,7 @@ public class EntityPokemon extends EntityCreature{
 
     public EntityPokemon(World worldIn){
         super(worldIn);
+        setSize(1.5F, 1.8F);
     }
 
     @Override
@@ -95,4 +105,52 @@ public class EntityPokemon extends EntityCreature{
         super.onDeath(cause);
         PokemodWorldData.getInstance().removeRarePokemonSpawn(getPokemonId());
     }
+
+    //Copied from EntityMob.attackEntityAsMob
+    @Override
+    public boolean attackEntityAsMob(Entity entityIn){
+        float f = (float)this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
+        int i = 0;
+
+        if(entityIn instanceof EntityLivingBase) {
+            f += EnchantmentHelper.getModifierForCreature(this.getHeldItemMainhand(), ((EntityLivingBase)entityIn).getCreatureAttribute());
+            i += EnchantmentHelper.getKnockbackModifier(this);
+        }
+
+        boolean flag = entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), f);
+
+        if(flag) {
+            if(i > 0 && entityIn instanceof EntityLivingBase) {
+                ((EntityLivingBase)entityIn).knockBack(this, i * 0.5F, MathHelper.sin(this.rotationYaw * 0.017453292F), (-MathHelper.cos(this.rotationYaw * 0.017453292F)));
+                this.motionX *= 0.6D;
+                this.motionZ *= 0.6D;
+            }
+
+            int j = EnchantmentHelper.getFireAspectModifier(this);
+
+            if(j > 0) {
+                entityIn.setFire(j * 4);
+            }
+
+            if(entityIn instanceof EntityPlayer) {
+                EntityPlayer entityplayer = (EntityPlayer)entityIn;
+                ItemStack itemstack = this.getHeldItemMainhand();
+                ItemStack itemstack1 = entityplayer.isHandActive() ? entityplayer.getActiveItemStack() : null;
+
+                if(itemstack != null && itemstack1 != null && itemstack.getItem() instanceof ItemAxe && itemstack1.getItem() == Items.SHIELD) {
+                    float f1 = 0.25F + EnchantmentHelper.getEfficiencyModifier(this) * 0.05F;
+
+                    if(this.rand.nextFloat() < f1) {
+                        entityplayer.getCooldownTracker().setCooldown(Items.SHIELD, 100);
+                        this.worldObj.setEntityState(entityplayer, (byte)30);
+                    }
+                }
+            }
+
+            this.applyEnchantments(this, entityIn);
+        }
+
+        return flag;
+    }
+
 }
