@@ -8,6 +8,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 
+import com.minemaarten.pokemodgo.PokeModGo;
 import com.minemaarten.pokemodgo.lib.Constants;
 import com.minemaarten.pokemodgo.pokedex.PokedexManager;
 
@@ -25,6 +26,9 @@ public class PokemodWorldData extends WorldSavedData{
     }
 
     public static PokemodWorldData getInstance(){
+        if(overworld == null) {
+            overworld = PokeModGo.proxy.getPlayer().worldObj;
+        }
         if(overworld != null) {
             PokemodWorldData manager = (PokemodWorldData)overworld.loadItemData(PokemodWorldData.class, DATA_KEY);
             if(manager == null) {

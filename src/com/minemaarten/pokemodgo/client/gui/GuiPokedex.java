@@ -173,8 +173,8 @@ public class GuiPokedex extends GuiBase{
 
     private List<Pokemon> getVisiblePokemon(){
         Stream<Pokemon> pokemons = getAllApplicablePokemon();
-        if(sortMode == SortMode.ID) pokemons = pokemons.sorted((x, y) -> Integer.compare(x.id, y.id));
-        if(sortMode == SortMode.NAME) pokemons = pokemons.sorted((x, y) -> x.name.compareTo(y.name));
+        if(sortMode == SortMode.ID) pokemons = pokemons.filter(x -> x != null).sorted((x, y) -> Integer.compare(x.id, y.id));
+        if(sortMode == SortMode.NAME) pokemons = pokemons.filter(x -> x != null).sorted((x, y) -> x.name.compareTo(y.name));
         return pokemons.skip(scrollBar.getState() * POKEMON_PER_ROW).limit(POKEMON_PER_ROW * ROWS).collect(Collectors.toList());
     }
 

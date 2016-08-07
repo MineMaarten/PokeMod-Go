@@ -13,6 +13,8 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.minemaarten.pokemodgo.client.gui.GuiPokedex;
 import com.minemaarten.pokemodgo.network.NetworkHandler;
@@ -28,11 +30,16 @@ public class ItemPokedex extends Item{
     @Override
     public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand){
         if(worldIn.isRemote) {
-            Minecraft.getMinecraft().displayGuiScreen(new GuiPokedex());
+            displayPokedexGUI();
         } else {
             NetworkHandler.sendTo(new PacketSyncPokedex(playerIn), (EntityPlayerMP)playerIn);
         }
         return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemStackIn);
+    }
+
+    @SideOnly(Side.CLIENT)
+    private void displayPokedexGUI(){
+        Minecraft.getMinecraft().displayGuiScreen(new GuiPokedex());
     }
 
     @Override
