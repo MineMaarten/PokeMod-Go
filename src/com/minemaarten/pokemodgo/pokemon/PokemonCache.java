@@ -1,6 +1,8 @@
 package com.minemaarten.pokemodgo.pokemon;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -8,6 +10,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import javax.imageio.ImageIO;
 
 import org.apache.commons.lang3.concurrent.ConcurrentUtils;
 
@@ -68,6 +72,26 @@ public class PokemonCache{
         new File(CACHE_FOLDER + "Pokemon\\").mkdirs();
         File file = new File(CACHE_FOLDER + "Pokemon\\" + pokemon.id + ".json");//config/PokeModgo/PokemonCache/pokemon/1.json
         GsonUtils.writeToFile(pokemon, file);
+    }
+
+    public void saveTextureToFile(BufferedImage image, int pokemonId){
+        File file = new File(CACHE_FOLDER + "Pokemon\\" + pokemonId + ".png");
+        try {
+            ImageIO.write(image, "png", file);
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public BufferedImage getTextureFromFileCache(int pokemonId){
+        File file = new File(CACHE_FOLDER + "Pokemon\\" + pokemonId + ".png");
+        if(!file.exists()) return null;
+        try {
+            return ImageIO.read(file);
+        } catch(IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public List<String> getAllTypes(){

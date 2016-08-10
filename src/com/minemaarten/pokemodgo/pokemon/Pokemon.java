@@ -31,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.minemaarten.pokemodgo.PokeModGo;
 import com.minemaarten.pokemodgo.lib.Constants;
 
 public class Pokemon{
@@ -132,7 +133,12 @@ public class Pokemon{
             if(texture == null) {
                 texture = TEXTURE_GETTER.submit(() -> {
                     try {
-                        return ImageIO.read(getInputStream(String.format(SPRITE_URL, id)));
+                        BufferedImage image = PokeModGo.instance.pokemonCache.getTextureFromFileCache(id);
+                        if(image == null) {
+                            image = ImageIO.read(getInputStream(String.format(SPRITE_URL, id)));
+                            PokeModGo.instance.pokemonCache.saveTextureToFile(image, id);
+                        }
+                        return image;
                     } catch(Exception e) {
                         e.printStackTrace();
                         return null;
