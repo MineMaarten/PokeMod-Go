@@ -60,7 +60,7 @@ public class PokemonCache{
     }
 
     public Stream<Pokemon> getLoadedPokemon(){
-        return cache.entrySet().stream().filter(x -> x.getValue().isDone()).map(x -> PokeModGo.instance.getPokemon(x.getKey()));
+        return cache.entrySet().stream().filter(x -> x.getValue().isDone()).map(x -> PokeModGo.instance.getPokemon(x.getKey())).filter(x -> x != null);
     }
 
     private Pokemon getPokemonFromFileCache(int id){
