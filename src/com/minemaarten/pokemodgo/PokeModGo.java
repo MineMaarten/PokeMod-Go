@@ -50,7 +50,7 @@ public class PokeModGo{
     @EventHandler
     public void PreInit(FMLPreInitializationEvent event){
 
-        Configuration config = new Configuration(new File(event.getModConfigurationDirectory().getAbsolutePath() + "\\PokeModGo\\pokemodgo.cfg"));
+        Configuration config = new Configuration(new File(event.getModConfigurationDirectory().getAbsolutePath() + File.separator + "PokeModGo" + File.separator + "pokemodgo.cfg"));
         MIN_POKEMON_ID = config.getInt("min_pokemon_id", Configuration.CATEGORY_GENERAL, 1, 1, Integer.MAX_VALUE, "Lower bound of the Pokemon id range used in this instance.");
         MAX_POKEMON_ID = config.getInt("max_pokemon_id", Configuration.CATEGORY_GENERAL, 151, 1, Integer.MAX_VALUE, "Higher bound of the Pokemon id range used in this instance (inclusive).");
         if(config.hasChanged()) config.save();

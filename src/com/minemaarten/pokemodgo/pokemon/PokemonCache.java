@@ -25,7 +25,7 @@ public class PokemonCache{
     private final String CACHE_FOLDER;
 
     public PokemonCache(File configFolder){
-        CACHE_FOLDER = configFolder.getAbsolutePath() + "\\PokeModGo\\PokemonCache\\";
+        CACHE_FOLDER = configFolder.getAbsolutePath() + File.separator + "PokeModGo" + File.separator + "PokemonCache" + File.separator;
         new File(CACHE_FOLDER).mkdirs();
     }
 
@@ -64,18 +64,18 @@ public class PokemonCache{
     }
 
     private Pokemon getPokemonFromFileCache(int id){
-        File file = new File(CACHE_FOLDER + "Pokemon\\" + id + ".json");//config/PokeModgo/PokemonCache/pokemon/1.json
+        File file = new File(CACHE_FOLDER + "Pokemon" + File.separator + id + ".json");//config/PokeModgo/PokemonCache/pokemon/1.json
         return GsonUtils.readFromFile(Pokemon.class, file);
     }
 
     private void savePokemonToFile(Pokemon pokemon){
-        new File(CACHE_FOLDER + "Pokemon\\").mkdirs();
-        File file = new File(CACHE_FOLDER + "Pokemon\\" + pokemon.id + ".json");//config/PokeModgo/PokemonCache/pokemon/1.json
+        new File(CACHE_FOLDER + "Pokemon" + File.separator).mkdirs();
+        File file = new File(CACHE_FOLDER + "Pokemon" + File.separator + pokemon.id + ".json");//config/PokeModgo/PokemonCache/pokemon/1.json
         GsonUtils.writeToFile(pokemon, file);
     }
 
     public void saveTextureToFile(BufferedImage image, int pokemonId){
-        File file = new File(CACHE_FOLDER + "Pokemon\\" + pokemonId + ".png");
+        File file = new File(CACHE_FOLDER + "Pokemon" + File.separator + pokemonId + ".png");
         try {
             ImageIO.write(image, "png", file);
         } catch(IOException e) {
@@ -84,7 +84,7 @@ public class PokemonCache{
     }
 
     public BufferedImage getTextureFromFileCache(int pokemonId){
-        File file = new File(CACHE_FOLDER + "Pokemon\\" + pokemonId + ".png");
+        File file = new File(CACHE_FOLDER + "Pokemon" + File.separator + pokemonId + ".png");
         if(!file.exists()) return null;
         try {
             return ImageIO.read(file);
