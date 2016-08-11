@@ -1,6 +1,7 @@
 package com.minemaarten.pokemodgo.event;
 
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackMelee;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
@@ -53,9 +54,11 @@ public class PokeModEventHandler{
 
     @SubscribeEvent
     public void onEntitySpawnListGathering(PotentialSpawns event){
-        event.getList().add(POKEMON_SPAWN_GROUND_ENTRY);
-        event.getList().add(POKEMON_SPAWN_WATER_ENTRY);
-        event.getList().add(POKEMON_SPAWN_FLY_ENTRY);
+        if(event.getType() == EnumCreatureType.CREATURE) {
+            event.getList().add(POKEMON_SPAWN_GROUND_ENTRY);
+            event.getList().add(POKEMON_SPAWN_WATER_ENTRY);
+            event.getList().add(POKEMON_SPAWN_FLY_ENTRY);
+        }
     }
 
     @SubscribeEvent
