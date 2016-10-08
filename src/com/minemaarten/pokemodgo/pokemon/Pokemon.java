@@ -38,7 +38,6 @@ public class Pokemon{
 
     private transient static final String BASE_URL = "http://pokeapi.co/api/v2/pokemon/%s/";
     private transient static final String SPECIES_URL = "http://pokeapi.co/api/v2/pokemon-species/%s/";
-    private transient static final String SPRITE_URL = "http://pokeapi.co/media/sprites/pokemon/%s.png";
     private transient static final ExecutorService TEXTURE_GETTER = Executors.newSingleThreadExecutor();
     private transient static final ResourceLocation MISSING_TEXTURE = new ResourceLocation(Constants.MOD_ID, "misc/missing_texture.png");
     private transient static final ResourceLocation LOADING_TEXTURE = new ResourceLocation(Constants.MOD_ID, "misc/loading_texture.png");
@@ -52,6 +51,7 @@ public class Pokemon{
     public final Set<String> stringTypes = new HashSet<String>();
     public final String habitat;
     public final String description;
+    public final String spriteUrl;
 
     /**
      * Gson constructor
@@ -61,6 +61,7 @@ public class Pokemon{
         name = "";
         habitat = null;
         description = "";
+        spriteUrl = null;
     }
 
     protected Pokemon(int id) throws IOException{
@@ -73,6 +74,7 @@ public class Pokemon{
 
             this.id = id;
             tempName = root.get("name").getAsString();
+            spriteUrl = root.get("sprites").getAsJsonObject().get("front_default").getAsString();
 
             for(JsonElement element : root.get("types").getAsJsonArray()) {
                 String typeName = element.getAsJsonObject().get("type").getAsJsonObject().get("name").getAsString();
@@ -135,7 +137,7 @@ public class Pokemon{
                     try {
                         BufferedImage image = PokeModGo.instance.pokemonCache.getTextureFromFileCache(id);
                         if(image == null) {
-                            image = ImageIO.read(getInputStream(String.format(SPRITE_URL, id)));
+                            image = ImageIO.read(getInputStream(spriteUrl));
                             PokeModGo.instance.pokemonCache.saveTextureToFile(image, id);
                         }
                         return image;
